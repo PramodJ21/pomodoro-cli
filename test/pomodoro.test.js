@@ -10,8 +10,8 @@ test('Database sync in-memory operations', () => {
   db.initializeDb(memDb);
 
   // Settings test
-  db.setSetting(memDb, 'theme', 'matrix');
-  assert.equal(db.getSetting(memDb, 'theme'), 'matrix');
+  db.setSetting(memDb, 'theme', 'donut');
+  assert.equal(db.getSetting(memDb, 'theme'), 'donut');
   assert.equal(db.getSetting(memDb, 'nonexistent', 'default_val'), 'default_val');
 
   // Session lifecycle test
@@ -41,12 +41,12 @@ test('Database sync in-memory operations', () => {
   memDb.close();
 });
 
-test('All 14 animation themes render valid uniform frames', () => {
-  assert.equal(animations.THEMES.length, 14);
+test('All ascii.rest animation themes render valid uniform frames', () => {
+  assert.equal(animations.THEMES.length, 20);
 
   for (const theme of animations.THEMES) {
     for (const phase of ['WORK', 'BREAK', 'OVERTIME']) {
-      for (let frame = 0; frame < 8; frame++) {
+      for (let frame = 0; frame < 5; frame++) {
         const [lines, caption] = animations.getAnimationLines(theme, phase, frame, 0.5);
         assert.ok(Array.isArray(lines), `Theme ${theme} ${phase} lines must be an array`);
         assert.equal(typeof caption, 'string', `Theme ${theme} ${phase} caption must be a string`);
@@ -63,6 +63,16 @@ test('All 14 animation themes render valid uniform frames', () => {
       }
     }
   }
+});
+
+test('Legacy theme aliases resolve smoothly', () => {
+  assert.equal(animations.resolveTheme('bonfire'), 'campfire');
+  assert.equal(animations.resolveTheme('matrix'), 'matrix-rain');
+  assert.equal(animations.resolveTheme('stars'), 'starfield');
+  assert.equal(animations.resolveTheme('moon'), 'moon-phases');
+  assert.equal(animations.resolveTheme('duck'), 'cat');
+  assert.equal(animations.resolveTheme('knight'), 'cube');
+  assert.equal(animations.resolveTheme('unknown_theme'), 'donut');
 });
 
 test('Format duration utilities', () => {

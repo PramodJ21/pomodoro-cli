@@ -17,7 +17,7 @@ const TITLE = `
 export function runHomeScreen(canvas, keyManager, connection) {
   return new Promise((resolve) => {
     let selected = 0;
-    let currentTheme = db.getSetting(connection, 'theme', 'bonfire');
+    let currentTheme = db.getSetting(connection, 'theme', 'donut');
 
     const render = () => {
       canvas.resize();

@@ -1,776 +1,198 @@
-/**
- * ASCII and pixel animations for Pomodoro timer.
- * Includes inspirations from ascii-magic-art and dynamic algorithmic generators.
- */
+// Animated ASCII companion themes powered by ascii.rest (https://ascii.rest)
+// All pieces are self-contained mathematical & artistic terminal animations.
+
+import * as donutMod from './pieces/donut.js';
+import * as catMod from './pieces/cat.js';
+import * as campfireMod from './pieces/campfire.js';
+import * as coffeeMod from './pieces/coffee.js';
+import * as hourglassMod from './pieces/hourglass.js';
+import * as cubeMod from './pieces/cube.js';
+import * as matrixMod from './pieces/matrix-rain.js';
+import * as starfieldMod from './pieces/starfield.js';
+import * as ballsMod from './pieces/bouncing-balls.js';
+import * as candleMod from './pieces/candle.js';
+import * as moonMod from './pieces/moon-phases.js';
+import * as dnaMod from './pieces/dna-helix.js';
+import * as firefliesMod from './pieces/fireflies.js';
+import * as galaxyMod from './pieces/galaxy.js';
+import * as foxMod from './pieces/fox.js';
+import * as doomFireMod from './pieces/doom-fire.js';
+import * as snakeMod from './pieces/snake.js';
+import * as owlMod from './pieces/owl.js';
+import * as seaSwellMod from './pieces/sea-swell.js';
 
 export const THEMES = [
-  'bonfire',
-  'coffee',
+  'donut',
   'cat',
-  'duck',
-  'knight',
-  'candle',
-  'matrix',
-  'stars',
-  'moon',
-  'clock',
-  'mage',
-  'slime',
+  'campfire',
+  'coffee',
   'hourglass',
+  'cube',
+  'matrix-rain',
+  'starfield',
+  'bouncing-balls',
+  'candle',
+  'moon-phases',
+  'dna-helix',
+  'fireflies',
+  'galaxy',
+  'fox',
+  'doom-fire',
+  'snake',
+  'owl',
+  'sea-swell',
   'none',
 ];
 
 export const THEME_NAMES = {
-  bonfire: 'Bonfire',
-  coffee: 'Coffee Mug',
-  cat: 'Coding Cat',
-  duck: 'Debug Duck',
-  knight: 'Pixel Knight',
-  candle: 'Candle Flame',
-  matrix: 'Matrix Rain',
-  stars: 'Cosmic Stars',
-  moon: 'Lunar Phases',
-  clock: 'Analog Clock',
-  mage: 'Arcane Mage',
-  slime: 'RPG Slime',
+  donut: 'Donut 3D',
+  cat: 'Sleeping Cat',
+  campfire: 'Cozy Campfire',
+  coffee: 'Steaming Coffee',
   hourglass: 'Hourglass',
+  cube: 'Wireframe Cube',
+  'matrix-rain': 'Matrix Rain',
+  starfield: 'Warp Starfield',
+  'bouncing-balls': 'Bouncing Balls',
+  candle: 'Candle Flame',
+  'moon-phases': 'Moon Phases',
+  'dna-helix': 'DNA Double Helix',
+  fireflies: 'Fireflies',
+  galaxy: 'Spiral Galaxy',
+  fox: 'Sleeping Fox',
+  'doom-fire': 'Doom Fire',
+  snake: 'Slithering Snake',
+  owl: 'Night Owl',
+  'sea-swell': 'Ocean Swell',
   none: 'Off',
 };
 
-// --- THEME 1: Bonfire (Dark Souls coiled sword & flame) ---
-const BONFIRE_WORK = [
-  [
-    '    (  . )    ',
-    '  (  ) )  )   ',
-    ' (  ) ) (  )  ',
-    '   |====|     ',
-    ' _/_||_\\_\\_   ',
-  ],
-  [
-    '  ( *  )      ',
-    ' ( ) (  )     ',
-    '( ) ( )  )    ',
-    '   |====|     ',
-    ' _/_||_\\_\\_   ',
-  ],
-  [
-    '    (  . )    ',
-    '  (  ( ) )    ',
-    ' ( ) (  ) )   ',
-    '   |====|     ',
-    ' _/_||_\\_\\_   ',
-  ],
-  [
-    '    (   * )   ',
-    '   ) ( (  )   ',
-    '  ( ) ) (  )  ',
-    '   |====|     ',
-    ' _/_||_\\_\\_   ',
-  ],
-];
+// Aliases to seamlessly migrate old theme IDs stored in database
+const LEGACY_ALIASES = {
+  bonfire: 'campfire',
+  matrix: 'matrix-rain',
+  stars: 'starfield',
+  moon: 'moon-phases',
+  clock: 'donut',
+  duck: 'cat',
+  knight: 'cube',
+  mage: 'galaxy',
+  slime: 'bouncing-balls',
+};
 
-const BONFIRE_REST = [
-  [
-    '     .   *    ',
-    '    ( · )     ',
-    '   (  .  )    ',
-    '   |====|     ',
-    ' _/_||_\\_\\_   ',
-  ],
-  [
-    '    *   .     ',
-    '     ( · )    ',
-    '    (  .  )   ',
-    '   |====|     ',
-    ' _/_||_\\_\\_   ',
-  ],
-];
+// Piece registry mapping theme ID to loader and metadata
+const PIECES = {
+  donut: { mod: donutMod, caption: 'Rotating Donut (donut.c)' },
+  cat: { mod: catMod, caption: 'Tabby asleep on paws' },
+  campfire: { mod: campfireMod, caption: 'Flickering Campfire' },
+  coffee: { mod: coffeeMod, caption: 'Steaming Coffee' },
+  hourglass: { mod: hourglassMod, caption: 'Sands of Time' },
+  cube: { mod: cubeMod, caption: '3D Wireframe Cube' },
+  'matrix-rain': { mod: matrixMod, caption: 'Falling Matrix Code' },
+  starfield: { mod: starfieldMod, caption: 'Cosmic Warp Speed' },
+  'bouncing-balls': { mod: ballsMod, caption: 'Bouncing Balls' },
+  candle: { mod: candleMod, caption: 'Candle Flame' },
+  'moon-phases': { mod: moonMod, caption: 'Lunar Moon Phases' },
+  'dna-helix': { mod: dnaMod, caption: 'DNA Double Helix' },
+  fireflies: { mod: firefliesMod, caption: 'Fireflies Swarm' },
+  galaxy: { mod: galaxyMod, caption: 'Spiral Galaxy' },
+  fox: { mod: foxMod, caption: 'Sleeping Fox' },
+  'doom-fire': { mod: doomFireMod, caption: 'PSX Doom Fire' },
+  snake: { mod: snakeMod, caption: 'Slithering Snake' },
+  owl: { mod: owlMod, caption: 'Observing Night Owl' },
+  'sea-swell': { mod: seaSwellMod, caption: 'Ocean Sailboat Swell' },
+};
 
-// --- THEME 2: Coffee Mug (from ascii-magic-art coffee-steam & yawning-coffee-cup) ---
-const COFFEE_WORK = [
-  [
-    '      ( ~ )  .   ',
-    '     .  ( * )    ',
-    '   ┌───────────┐ ',
-    '   │  ( •‿• )  │)',
-    '   │  |     |  │/',
-    '   └───\\___/───┘ ',
-  ],
-  [
-    '     ( * )  ~    ',
-    '        ( . )    ',
-    '   ┌───────────┐ ',
-    '   │  ( •o• )  │)',
-    '   │  |     |  │/',
-    '   └───\\___/───┘ ',
-  ],
-  [
-    '        ~  ( * ) ',
-    '     ( ~ )  .    ',
-    '   ┌───────────┐ ',
-    '   │  ( •‿• )  │)',
-    '   │  |     |  │/',
-    '   └───\\___/───┘ ',
-  ],
-  [
-    '     .  ( * )  ~ ',
-    '       ( . )     ',
-    '   ┌───────────┐ ',
-    '   │  ( ^‿^ )  │)',
-    '   │  |     |  │/',
-    '   └───\\___/───┘ ',
-  ],
-];
+// Cached renderer instances (one instance per theme)
+const RENDERER_INSTANCES = new Map();
 
-const COFFEE_REST = [
-  [
-    '         z       ',
-    '        Z   ( ~ )',
-    '   ┌───────────┐ ',
-    '   │  ( -.- )  │)',
-    '   │  |  w  |  │/',
-    '   └───\\___/───┘ ',
-  ],
-  [
-    '        z        ',
-    '       Z    ( · )',
-    '   ┌───────────┐ ',
-    '   │  ( >o< )  │)',
-    '   │  |  O  |  │/',
-    '   └───\\___/───┘ ',
-  ],
-];
-
-const COFFEE_OVERTIME = [
-  [
-    '    * ( ✦ ) ~  * ',
-    '     ( ~ ) ( * ) ',
-    '   ┌───────────┐ ',
-    '   │  ( O.O )  │)',
-    '   │  |  !  |  │/',
-    '   └───\\___/───┘ ',
-  ],
-  [
-    '     ~ ( * ) ( ✦)',
-    '    * ( ✦ ) ~    ',
-    '   ┌───────────┐ ',
-    '   │  ( O.O )  │)',
-    '   │  |  !  |  │/',
-    '   └───\\___/───┘ ',
-  ],
-];
-
-// --- THEME 3: Coding Cat (from ascii-magic-art laptop-typing-cat & sleeping-cat) ---
-const CAT_WORK = [
-  [
-    '       /\\_/\\   ┌───────┐',
-    '      ( •.• )  │>_ code│',
-    '      / > .    └───────┘',
-    '     (______)===|=====| ',
-    '     ~~~~~~~~~~~~~~~~~~ ',
-  ],
-  [
-    '       /\\_/\\   ┌───────┐',
-    '      ( •_• )  │>_ nap()',
-    '      / . <    └───────┘',
-    '     (______)===|=====| ',
-    '     ~~~~~~~~~~~~~~~~~~ ',
-  ],
-  [
-    '       /\\_/\\   ┌───────┐',
-    '      ( ^.^ )  │>_ run │',
-    '      / > .    └───────┘',
-    '     (______)===|=====| ',
-    '     ~~~~~~~~~~~~~~~~~~ ',
-  ],
-  [
-    '       /\\_/\\   ┌───────┐',
-    '      ( •o• )  │>_ ok! │',
-    '      / . <    └───────┘',
-    '     (______)===|=====| ',
-    '     ~~~~~~~~~~~~~~~~~~ ',
-  ],
-];
-
-const CAT_REST = [
-  [
-    '            z           ',
-    '           Z            ',
-    '       /\\_/\\            ',
-    '      ( -.- )  ~*       ',
-    '    (__________)        ',
-  ],
-  [
-    '          z             ',
-    '         Z              ',
-    '       /\\_/\\            ',
-    '      ( -.- )           ',
-    '    (__________)        ',
-  ],
-];
-
-const CAT_OVERTIME = [
-  [
-    '     ✦ /\\_/\\ ✦ ┌───────┐',
-    '      ( >.< )  │>_ TURBO',
-    '      / > >    └───────┘',
-    '     (______)===|=====| ',
-    '     ~~~~~~~~~~~~~~~~~~ ',
-  ],
-  [
-    '     * /\\_/\\ * ┌───────┐',
-    '      ( >o< )  │>_ FAST!',
-    '      / < <    └───────┘',
-    '     (______)===|=====| ',
-    '     ~~~~~~~~~~~~~~~~~~ ',
-  ],
-];
-
-// --- THEME 4: Debug Duck (from ascii-magic-art debug-duck-bob) ---
-const DUCK_WORK = [
-  [
-    '       __     [ hmm.. ] ',
-    '     <(o )___   /       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-  [
-    '       __     [ line 42]',
-    '     <(• )___   /       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-  [
-    '       __     [ logic? ]',
-    '     <(o )___   /       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-  [
-    '       __     [ quack! ]',
-    '     <(^ )___   /       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-];
-
-const DUCK_REST = [
-  [
-    '       __        z      ',
-    '     <(- )___   Z       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-  [
-    '       __       z       ',
-    '     <(- )___  Z        ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-];
-
-const DUCK_OVERTIME = [
-  [
-    '       __  ✦  [fixed! ✓]',
-    '     <(^ )___   /       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-  [
-    '       __  *  [DONE!  ✓]',
-    '     <(^ )___   /       ',
-    '      ( ._> /           ',
-    '     ~ ~ ~ ~ ~ ~ ~ ~ ~  ',
-    '     ~~~~~~~~~~~~~~~~~  ',
-  ],
-];
-
-// --- THEME 5: Pixel Knight (from ascii-magic-art pixel-knight-salute) ---
-const KNIGHT_WORK = [
-  [
-    '      ( )       ',
-    '     /▓▓\\   |   ',
-    '    [ •_•] -|==>',
-    '    /|▓▓|\\  |   ',
-    '   [▓|▓▓|▓]     ',
-    '     ||||       ',
-  ],
-  [
-    '      ( )   ^   ',
-    '     /▓▓\\   |   ',
-    '    [ •_•] /|   ',
-    '    /|▓▓|\\/     ',
-    '   [▓|▓▓|▓]     ',
-    '     ||||       ',
-  ],
-  [
-    '     *( )*  ✦   ',
-    '     /▓▓\\   |   ',
-    '    [ ^_^] /|   ',
-    '    /|▓▓|\\/     ',
-    '   [▓|▓▓|▓]     ',
-    '     ||||       ',
-  ],
-  [
-    '      ( )   ^   ',
-    '     /▓▓\\   |   ',
-    '    [ •_•] /|   ',
-    '    /|▓▓|\\/     ',
-    '   [▓|▓▓|▓]     ',
-    '     ||||       ',
-  ],
-];
-
-const KNIGHT_REST = [
-  [
-    '      ( )       ',
-    '     /▓▓\\       ',
-    '    [ -.-]      ',
-    '    /|▓▓|\\  |   ',
-    '   [▓|▓▓|▓] |===',
-    '     ||||       ',
-  ],
-  [
-    '      ( )   z   ',
-    '     /▓▓\\  Z    ',
-    '    [ -.-]      ',
-    '    /|▓▓|\\  |   ',
-    '   [▓|▓▓|▓] |===',
-    '     ||||       ',
-  ],
-];
-
-const KNIGHT_OVERTIME = [
-  [
-    '    ✦ ( ) ✦ ⚔   ',
-    '     /▓▓\\   |   ',
-    '    [ ^o^] /|==>',
-    '    /|▓▓|\\/     ',
-    '   [▓|▓▓|▓]     ',
-    '     ||||       ',
-  ],
-  [
-    '    * ( ) * ★   ',
-    '     /▓▓\\   |   ',
-    '    [ ^o^] /|==>',
-    '    /|▓▓|\\/     ',
-    '   [▓|▓▓|▓]     ',
-    '     ||||       ',
-  ],
-];
-
-// --- THEME 6: Candle Flame (from ascii-magic-art candle-flame) ---
-const CANDLE_WORK = [
-  [
-    '     ( * )     ',
-    '     ) ( )     ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │ █ │     ',
-    '    ┌┴───┴┐    ',
-  ],
-  [
-    '    (  . )     ',
-    '    ( ) )      ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │.█ │     ',
-    '    ┌┴───┴┐    ',
-  ],
-  [
-    '     ( * )     ',
-    '     (  ( )    ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │:█ │     ',
-    '    ┌┴───┴┐    ',
-  ],
-  [
-    '     ( .  )    ',
-    '      ) (      ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │:█:│     ',
-    '    ┌┴───┴┐    ',
-  ],
-];
-
-const CANDLE_REST = [
-  [
-    '       .       ',
-    '       ·       ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │ █ │     ',
-    '    ┌┴───┴┐    ',
-  ],
-  [
-    '       *       ',
-    '       ·       ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │ █ │     ',
-    '    ┌┴───┴┐    ',
-  ],
-];
-
-const CANDLE_OVERTIME = [
-  [
-    '    * ( ✦ ) *  ',
-    '    ( ) ( ) )  ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │:█:│     ',
-    '    ┌┴───┴┐    ',
-  ],
-  [
-    '    ✦ ( * ) ✦  ',
-    '    ) ( ) ( )  ',
-    '       |       ',
-    '     ┌───┐     ',
-    '     │:█:│     ',
-    '    ┌┴───┴┐    ',
-  ],
-];
-
-// --- THEME 7: Matrix Digital Rain ---
-const MATRIX_WORK = [
-  [
-    ' 0 1 0 1 0 1 0 1 0 1 ',
-    ' 1 0 1 0 1 0 1 0 1 0 ',
-    ' 0 1 0 1 0 1 0 1 0 1 ',
-    ' 1 0 1 0 1 0 1 0 1 0 ',
-  ],
-  [
-    ' 1 0 0 1 1 0 1 0 0 1 ',
-    ' 0 1 1 0 0 1 0 1 1 0 ',
-    ' 1 0 0 1 1 0 1 0 0 1 ',
-    ' 0 1 1 0 0 1 0 1 1 0 ',
-  ],
-  [
-    ' 0 1 1 0 1 0 0 1 1 0 ',
-    ' 1 0 0 1 0 1 1 0 0 1 ',
-    ' 0 1 1 0 1 0 0 1 1 0 ',
-    ' 1 0 0 1 0 1 1 0 0 1 ',
-  ],
-];
-
-const MATRIX_REST = [
-  [
-    ' . . · · . . · · . . ',
-    ' · · . . · · . . · · ',
-    ' . . · · . . · · . . ',
-    ' · · . . · · . . · · ',
-  ],
-  [
-    ' · · . . · · . . · · ',
-    ' . . · · . . · · . . ',
-    ' · · . . · · . . · · ',
-    ' . . · · . . · · . . ',
-  ],
-];
-
-// --- THEME 8: Cosmic Stars ---
-const STARS_WORK = [
-  [
-    ' .  *     ·   .   *  ',
-    '   ·   ✦    .   ·    ',
-    ' *   .    ·     *    ',
-    '   ✦    *   .    ✦   ',
-  ],
-  [
-    ' *  ·     .   *   ·  ',
-    '   .   *    ·   ✦    ',
-    ' ✦   *    .     ·    ',
-    '   ·    ✦   *    .   ',
-  ],
-  [
-    ' ·  ✦     *   ·   .  ',
-    '   *   ·    ✦   *    ',
-    ' .   ·    *     .    ',
-    '   *    .   ·    *   ',
-  ],
-];
-
-const STARS_REST = [
-  [
-    ' ·  ·     .   ·   ·  ',
-    '   .   ·    ·   .    ',
-    ' ·   .    ·     ·    ',
-    '   .    ·   .    .   ',
-  ],
-  [
-    ' .  ·     ·   .   ·  ',
-    '   ·   .    .   ·    ',
-    ' .   ·    .     ·    ',
-    '   ·    .   ·    .   ',
-  ],
-];
-
-// --- THEME 9: Lunar Phases ---
-const MOON_PHASES = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
-function renderMoonFrame(frameIdx, progressPct, phase) {
-  let mIdx;
-  if (phase === 'WORK') {
-    mIdx = Math.min(MOON_PHASES.length - 1, Math.floor(progressPct * MOON_PHASES.length));
-  } else if (phase === 'OVERTIME') {
-    mIdx = 4; // Full moon glowing
-  } else {
-    mIdx = frameIdx % MOON_PHASES.length;
+function getRenderer(theme) {
+  if (RENDERER_INSTANCES.has(theme)) {
+    return RENDERER_INSTANCES.get(theme);
   }
-  const m = MOON_PHASES[mIdx];
-  return [
-    '  .       ✦       ·  ',
-    `    (   ${m}   )   *   `,
-    '  *       ·       .  ',
-  ];
+  const entry = PIECES[theme];
+  if (!entry || !entry.mod || !entry.mod.default) {
+    return null;
+  }
+  const renderer = entry.mod.default();
+  RENDERER_INSTANCES.set(theme, renderer);
+  return renderer;
 }
 
-// --- THEME 10: Analog Clock ---
-const CLOCK_PHASES = ['🕛', '🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚'];
-function renderClockFrame(frameIdx) {
-  const c = CLOCK_PHASES[frameIdx % CLOCK_PHASES.length];
-  return [
-    '     ┌─────────┐     ',
-    `    │    ${c}    │     `,
-    '     └─────────┘     ',
-  ];
-}
-
-// --- THEME 11: Arcane Mage ---
-const MAGE_WORK = [
-  [
-    '     /\\         ',
-    '    /  \\    ✦   ',
-    '   /____\\  (o)  ',
-    '   ( •_•) -/ |  ',
-    '  _/(   )\\___|  ',
-  ],
-  [
-    '     /\\     .   ',
-    '    /  \\    *   ',
-    '   /____\\  (O)  ',
-    '   ( •_•) -/ |  ',
-    '  _/(   )\\___|  ',
-  ],
-  [
-    '     /\\    * ✦  ',
-    '    /  \\   (◎)  ',
-    '   /____\\  / |  ',
-    '   ( ^_^) -  |  ',
-    '  _/(   )\\___|  ',
-  ],
-  [
-    '     /\\     ✦   ',
-    '    /  \\   (o) *',
-    '   /____\\  / |  ',
-    '   ( •_•) -  |  ',
-    '  _/(   )\\___|  ',
-  ],
-];
-
-const MAGE_REST = [
-  [
-    '     /\\         ',
-    '    /  \\   z    ',
-    '   /____\\  Z    ',
-    '   ( -.-)  |    ',
-    '  _/(   )\\___|  ',
-  ],
-  [
-    '     /\\    z    ',
-    '    /  \\  Z     ',
-    '   /____\\       ',
-    '   ( -.-)  |    ',
-    '  _/(   )\\___|  ',
-  ],
-];
-
-// --- THEME 12: RPG Slime ---
-const SLIME_WORK = [
-  [
-    '      . ✦ .    ',
-    '     / o \\     ',
-    '    ( o.o )    ',
-    '   (_______)   ',
-  ],
-  [
-    '       ✦       ',
-    '     / - \\     ',
-    '    ( -.- )    ',
-    '   (_________) ',
-  ],
-  [
-    '      . * .    ',
-    '     / o \\     ',
-    '    ( •.• )    ',
-    '   (_______)   ',
-  ],
-  [
-    '      . ✦ .    ',
-    '     / ^ \\     ',
-    '    ( ^.^ )    ',
-    '   (_______)   ',
-  ],
-];
-
-const SLIME_REST = [
-  [
-    '          z    ',
-    '     / - \\  Z  ',
-    '    ( -.- )    ',
-    '   (_________) ',
-  ],
-  [
-    '        z      ',
-    '     / - \\ Z   ',
-    '    ( -.- )    ',
-    '   (_________) ',
-  ],
-];
-
-// --- THEME 13: Hourglass ---
-function renderHourglassChamber(progressPct, frameIdx, phase) {
-  let pct;
-  if (phase === 'BREAK') {
-    pct = Math.max(0.0, Math.min(1.0, 1.0 - progressPct));
-  } else if (phase === 'OVERTIME') {
-    pct = 1.0;
-  } else {
-    pct = Math.max(0.0, Math.min(1.0, progressPct));
-  }
-
-  const remaining = Math.max(0, Math.min(8, Math.round(8 * (1.0 - pct))));
-  const top1Count = Math.min(5, Math.max(0, remaining - 3));
-  const top2Count = Math.min(3, remaining);
-
-  const bottom = 8 - remaining;
-  const bot1Count = Math.min(3, bottom);
-  const bot2Count = Math.min(5, Math.max(0, bottom - 3));
-
-  const fillCentered = (count, width, char = '✦') => {
-    const pad = Math.floor((width - count) / 2);
-    const extra = (width - count) % 2;
-    return ' '.repeat(pad) + char.repeat(count) + ' '.repeat(pad + extra);
-  };
-
-  const t1 = fillCentered(top1Count, 5, '✦');
-  const t2 = fillCentered(top2Count, 3, '✦');
-  const b1 = fillCentered(bot1Count, 3, '✦');
-  const b2 = fillCentered(bot2Count, 5, '✦');
-
-  let particle;
-  if (phase === 'OVERTIME') {
-    particle = ['★', '✦', '✳', '✸'][frameIdx % 4];
-  } else if (pct >= 1.0) {
-    particle = ' ';
-  } else {
-    particle = [':', '·', '*', '✦'][frameIdx % 4];
-  }
-
-  return [
-    ' ╔═══════╗ ',
-    ` ║ ${t1} ║ `,
-    ` ║ \\${t2}/ ║ `,
-    ` ║   ${particle}   ║ `,
-    ` ║ /${b1}\\ ║ `,
-    ` ║ ${b2} ║ `,
-    ' ╚═══════╝ ',
-  ];
+export function resolveTheme(theme) {
+  if (!theme) return 'donut';
+  const aliased = LEGACY_ALIASES[theme] || theme;
+  return THEMES.includes(aliased) ? aliased : 'donut';
 }
 
 export function getNextTheme(current) {
-  if (!THEMES.includes(current)) return THEMES[0];
-  const idx = THEMES.indexOf(current);
-  return THEMES[(idx + 1) % THEMES.length];
+  const resolved = resolveTheme(current);
+  const idx = THEMES.indexOf(resolved);
+  const nextIdx = (idx + 1) % THEMES.length;
+  return THEMES[nextIdx];
 }
 
 export function getThemeDisplayName(theme) {
-  return THEME_NAMES[theme] || 'Bonfire';
+  const resolved = resolveTheme(theme);
+  return THEME_NAMES[resolved] || resolved;
 }
 
+/**
+ * Trims leading and trailing rows that are completely empty / whitespace.
+ * Preserves the uniform width of internal lines.
+ */
+function trimBlankRows(lines) {
+  let start = 0;
+  while (start < lines.length && lines[start].trim() === '') {
+    start++;
+  }
+  let end = lines.length - 1;
+  while (end >= start && lines[end].trim() === '') {
+    end--;
+  }
+  if (start > end) return [];
+  return lines.slice(start, end + 1);
+}
+
+/**
+ * Generates the ASCII animation lines and caption for a given theme, phase, and time.
+ * Returns [lines: string[], caption: string]
+ */
 export function getAnimationLines(theme, phase, frameIdx, progressPct = 0.0) {
-  if (theme === 'bonfire') {
-    if (phase === 'BREAK') return [BONFIRE_REST[frameIdx % BONFIRE_REST.length], '~ Resting at the Bonfire ~'];
-    if (phase === 'OVERTIME') return [BONFIRE_WORK[frameIdx % BONFIRE_WORK.length], '~ Fire Blazes Brightly ~'];
-    return [BONFIRE_WORK[frameIdx % BONFIRE_WORK.length], '~ The Fire Burns ~'];
+  const resolved = resolveTheme(theme);
+  if (resolved === 'none') {
+    return [[], ''];
   }
 
-  if (theme === 'coffee') {
-    if (phase === 'BREAK') return [COFFEE_REST[frameIdx % COFFEE_REST.length], '~ Savoring the Break ~'];
-    if (phase === 'OVERTIME') return [COFFEE_OVERTIME[frameIdx % COFFEE_OVERTIME.length], '~ Extra Caffeine Fuel! ~'];
-    return [COFFEE_WORK[frameIdx % COFFEE_WORK.length], '~ Fresh Coffee Steaming ~'];
+  const piece = PIECES[resolved];
+  if (!piece) {
+    return [[], ''];
   }
 
-  if (theme === 'cat') {
-    if (phase === 'BREAK') return [CAT_REST[frameIdx % CAT_REST.length], '~ Cat is sleeping on cushion ~'];
-    if (phase === 'OVERTIME') return [CAT_OVERTIME[frameIdx % CAT_OVERTIME.length], '~ Cat typing at hyper-speed! ~'];
-    return [CAT_WORK[frameIdx % CAT_WORK.length], '~ Cat is writing code ~'];
+  const renderer = getRenderer(resolved);
+  if (!renderer) {
+    return [[], ''];
   }
 
-  if (theme === 'duck') {
-    if (phase === 'BREAK') return [DUCK_REST[frameIdx % DUCK_REST.length], '~ Duck floating peacefully ~'];
-    if (phase === 'OVERTIME') return [DUCK_OVERTIME[frameIdx % DUCK_OVERTIME.length], '~ Bug Squashed! Quack! ~'];
-    return [DUCK_WORK[frameIdx % DUCK_WORK.length], '~ Explaining bug to duck ~'];
+  // Each frame in timer loop runs at 250ms interval -> t = frameIdx * 0.25
+  const t = Math.max(0, frameIdx * 0.25);
+  let rawFrame = '';
+  try {
+    rawFrame = renderer(t);
+  } catch {
+    return [[], ''];
   }
 
-  if (theme === 'knight') {
-    if (phase === 'BREAK') return [KNIGHT_REST[frameIdx % KNIGHT_REST.length], '~ Knight resting at camp ~'];
-    if (phase === 'OVERTIME') return [KNIGHT_OVERTIME[frameIdx % KNIGHT_OVERTIME.length], '~ Knight triumphant! ~'];
-    return [KNIGHT_WORK[frameIdx % KNIGHT_WORK.length], '~ Knight standing guard ~'];
+  const rawLines = typeof rawFrame === 'string' ? rawFrame.split('\n') : [];
+  const lines = trimBlankRows(rawLines);
+
+  // Caption based on phase
+  let caption = `~ ${piece.caption} ~`;
+  if (phase === 'OVERTIME') {
+    caption = `~ ${piece.caption} • Overtime ~`;
+  } else if (phase === 'BREAK') {
+    caption = `~ ${piece.caption} • Rest & Recharge ~`;
   }
 
-  if (theme === 'candle') {
-    if (phase === 'BREAK') return [CANDLE_REST[frameIdx % CANDLE_REST.length], '~ Soft candle glow ~'];
-    if (phase === 'OVERTIME') return [CANDLE_OVERTIME[frameIdx % CANDLE_OVERTIME.length], '~ Flame burning bright! ~'];
-    return [CANDLE_WORK[frameIdx % CANDLE_WORK.length], '~ Burning the midnight oil ~'];
-  }
-
-  if (theme === 'matrix') {
-    if (phase === 'BREAK') return [MATRIX_REST[frameIdx % MATRIX_REST.length], '~ System in Standby ~'];
-    if (phase === 'OVERTIME') return [MATRIX_WORK[frameIdx % MATRIX_WORK.length], '~ Mainframe Overclocked! ~'];
-    return [MATRIX_WORK[frameIdx % MATRIX_WORK.length], '~ Entering the Matrix ~'];
-  }
-
-  if (theme === 'stars') {
-    if (phase === 'BREAK') return [STARS_REST[frameIdx % STARS_REST.length], '~ Serene Cosmic Drift ~'];
-    if (phase === 'OVERTIME') return [STARS_WORK[frameIdx % STARS_WORK.length], '~ Supernova Focus! ~'];
-    return [STARS_WORK[frameIdx % STARS_WORK.length], '~ Navigating the Cosmos ~'];
-  }
-
-  if (theme === 'moon') {
-    const cap = phase === 'BREAK' ? '~ Moonlit Rest ~' : phase === 'OVERTIME' ? '~ Full Moon Brilliance ~' : '~ Waxing Focus ~';
-    return [renderMoonFrame(frameIdx, progressPct, phase), cap];
-  }
-
-  if (theme === 'clock') {
-    const cap = phase === 'BREAK' ? '~ Time to Rest ~' : phase === 'OVERTIME' ? '~ Bonus Focus Minutes ~' : '~ Ticking Steady ~';
-    return [renderClockFrame(frameIdx), cap];
-  }
-
-  if (theme === 'mage') {
-    if (phase === 'BREAK') return [MAGE_REST[frameIdx % MAGE_REST.length], '~ Meditating & Restoring Mana ~'];
-    if (phase === 'OVERTIME') return [MAGE_WORK[frameIdx % MAGE_WORK.length], '~ Mana Overflowing! ~'];
-    return [MAGE_WORK[frameIdx % MAGE_WORK.length], '~ Channeling Arcane Focus ~'];
-  }
-
-  if (theme === 'slime') {
-    if (phase === 'BREAK') return [SLIME_REST[frameIdx % SLIME_REST.length], '~ Slime is taking a nap ~'];
-    if (phase === 'OVERTIME') return [SLIME_WORK[frameIdx % SLIME_WORK.length], '~ Slime is supercharged! ~'];
-    return [SLIME_WORK[frameIdx % SLIME_WORK.length], '~ Slime is cheering you on! ~'];
-  }
-
-  if (theme === 'hourglass') {
-    const cap = phase === 'BREAK' ? '~ Turning the Hourglass ~' : phase === 'OVERTIME' ? '~ Hourglass Overflowing! ~' : '~ Sands of Time trickling ~';
-    return [renderHourglassChamber(progressPct, frameIdx, phase), cap];
-  }
-
-  return [[], ''];
+  return [lines, caption];
 }

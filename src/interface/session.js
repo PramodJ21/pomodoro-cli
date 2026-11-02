@@ -151,7 +151,7 @@ export function runSessionPresetScreen(canvas, keyManager, connection) {
  */
 export function runTimerScreen(canvas, keyManager, connection, workDuration, breakDuration) {
   return new Promise((resolve) => {
-    let currentTheme = db.getSetting(connection, 'theme', 'bonfire');
+    let currentTheme = db.getSetting(connection, 'theme', 'donut');
     const { sessionId, startTime } = sess.createSession(connection, workDuration, breakDuration);
 
     let phase = 'WORK';
@@ -327,9 +327,23 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
 
       // --- Animation Frame ---
       const [animLines, animCaption] = getAnimationLines(currentTheme, phase, frameIdx, progressPct);
-      const showAnim = animLines.length > 0 && canvas.rows >= 23;
-      const totalHeight = showAnim ? animLines.length + (animCaption ? 1 : 0) + 14 : 14;
+      const timerRequiredRows = 14;
+      const availableAnimRows = Math.max(0, canvas.rows - timerRequiredRows);
+      const canShowAnim = animLines.length > 0 && availableAnimRows >= 8;
 
+      let displayLines = [];
+      if (canShowAnim) {
+        const maxAnimLines = availableAnimRows - (animCaption ? 1 : 0);
+        if (animLines.length <= maxAnimLines) {
+          displayLines = animLines;
+        } else {
+          const excess = animLines.length - maxAnimLines;
+          const startCrop = Math.floor(excess / 2);
+          displayLines = animLines.slice(startCrop, startCrop + maxAnimLines);
+        }
+      }
+
+      const totalHeight = displayLines.length + (animCaption && (canShowAnim || canvas.rows >= 18) ? 1 : 0) + timerRequiredRows;
       let row = Math.max(1, Math.floor((canvas.rows - totalHeight) / 2));
 
       // Phase header
@@ -337,8 +351,8 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
       row++;
 
       // Animation & Caption
-      if (showAnim) {
-        for (const line of animLines) {
+      if (displayLines.length > 0) {
+        for (const line of displayLines) {
           canvas.addstr(row, widthCenter - Math.floor(visibleLength(line) / 2), line);
           row++;
         }

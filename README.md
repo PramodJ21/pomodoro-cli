@@ -1,6 +1,6 @@
 # pomodoro-cli 🍅
 
-A beautiful, zero-dependency terminal Pomodoro timer with 14 animated ASCII companions, overtime tracking, and rich productivity statistics.
+A beautiful, zero-dependency terminal Pomodoro timer with 19 animated ASCII companions (downloaded from [ascii.rest](https://ascii.rest)), overtime tracking, and rich productivity statistics.
 
 Built entirely in modern **Node.js (ESM)** using Node's built-in `node:sqlite` engine.
 
@@ -9,20 +9,26 @@ Built entirely in modern **Node.js (ESM)** using Node's built-in `node:sqlite` e
 ## ✨ Features
 
 - **⚡ Zero External Dependencies:** Powered completely by Node.js built-ins (`node:sqlite`, `node:readline`, ANSI terminal canvas). No `npm install` needed.
-- **🎨 14 Animated ASCII Companions:** Real-time multi-frame animations that react to work, overtime, and break phases:
-  - ☕ **Coffee Mug** (steaming mug)
-  - 🐱 **Coding Cat** (typing away)
-  - 🦆 **Debug Duck** (rubber duck companion)
-  - ⚔️ **Pixel Knight** (idle stance)
-  - 🕯️ **Candle Flame** (flickering candle)
-  - 👾 **Matrix Rain** (falling cyber glyphs)
-  - ✨ **Cosmic Stars** (twinkling starfield)
-  - 🌕 **Lunar Phases** (orbiting moon phases)
-  - 🕰️ **Analog Clock** (rotating clock hands)
-  - 🧙 **Arcane Mage** (pulsing mystic aura)
-  - 🟢 **RPG Slime** (squishy bounce)
-  - ⏳ **Hourglass** (falling grains of sand)
-  - 🔥 **Bonfire** (Dark Souls coiled sword & flame)
+- **🎨 19 Animated ASCII Companions:** Real-time fluid mathematical & artistic terminal animations downloaded from `ascii.rest`:
+  - 🍩 **Donut 3D** (Andy Sloane's iconic lit 3D rotating torus, after `donut.c`)
+  - 🐱 **Sleeping Cat** (peaceful tabby sleeping & breathing on paws with drifting Zs)
+  - 🔥 **Cozy Campfire** (flickering log fire with sparks and embers)
+  - ☕ **Steaming Coffee** (hot coffee cup with curling steam plumes)
+  - ⏳ **Hourglass** (flowing sand grains turning with cycle)
+  - 🧊 **Wireframe Cube** (stippled 3D hidden-line rotating cube)
+  - 👾 **Matrix Rain** (falling streams of matrix cyber glyphs)
+  - ✨ **Warp Starfield** (hyperspace star streaks rushing outward)
+  - ⚽ **Bouncing Balls** (kinetic rubber balls with squash and stretch physics)
+  - 🕯️ **Candle Flame** (tall wavering candle in a dark room)
+  - 🌕 **Moon Phases** (waxing and waning lunar cycle)
+  - 🧬 **DNA Double Helix** (turning double helix with base pairs)
+  - 💡 **Fireflies** (flashing swarm of fireflies over twilight grass)
+  - 🌌 **Spiral Galaxy** (tilted spinning galaxy with differential star speeds)
+  - 🦊 **Sleeping Fox** (woodland fox curled up snoozing and breathing)
+  - 💥 **Doom Fire** (classic PSX Doom fire generator algorithm)
+  - 🐍 **Slithering Snake** (smooth S-curve slithering snake)
+  - 🦉 **Night Owl** (wise owl blinking on a branch)
+  - ⛵ **Ocean Swell** (sailboat riding gentle undulating ocean swells)
   - 🚫 **Off** (minimalist clock only)
 - **⏱️ Smart Timer & Overtime Tracking:**
   - Big 5-row digital block clock with progress bar.
@@ -35,6 +41,10 @@ Built entirely in modern **Node.js (ESM)** using Node's built-in `node:sqlite` e
   3. **Activity Heatmap & Streaks:** 4-week GitHub-style commit grid (`░▒▓█`) with current streak and best streak.
   4. **Lifetime Records & Rank:** Total sessions, total focus time, best single day, daily average, and productivity rank (Novice to Ascended Master).
 - **💾 Persistent SQLite Storage:** Automatically stores sessions in `$XDG_DATA_HOME/pomodoro_cli/pomodoro_cli.db` (or `~/.local/share/pomodoro_cli/pomodoro_cli.db`).
+- **📥 Easily Download More Animations:** Download any piece from the 200+ library at [ascii.rest](https://ascii.rest) using:
+  ```bash
+  npm run download-animation <piece-name>
+  ```
 
 ---
 
