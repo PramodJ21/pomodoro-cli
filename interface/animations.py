@@ -1,6 +1,12 @@
 """ASCII and pixel animations for Pomodoro timer.
-Includes adaptations and inspirations from the ascii-magic-art library.
+Includes inspirations from ascii-magic-art and prebuilt animations from the rich library.
 """
+
+try:
+    import rich.spinner
+    _RICH_SPINNERS = rich.spinner.SPINNERS
+except ImportError:
+    _RICH_SPINNERS = {}
 
 THEMES = [
     "bonfire",
@@ -9,6 +15,10 @@ THEMES = [
     "duck",
     "knight",
     "candle",
+    "matrix",
+    "stars",
+    "moon",
+    "clock",
     "mage",
     "slime",
     "hourglass",
@@ -22,6 +32,10 @@ THEME_NAMES = {
     "duck": "Debug Duck",
     "knight": "Pixel Knight",
     "candle": "Candle Flame",
+    "matrix": "Matrix Rain",
+    "stars": "Cosmic Stars",
+    "moon": "Lunar Phases",
+    "clock": "Analog Clock",
     "mage": "Arcane Mage",
     "slime": "RPG Slime",
     "hourglass": "Hourglass",
@@ -437,7 +451,112 @@ CANDLE_OVERTIME = [
 ]
 
 
-# --- THEME 7: Arcane Mage (Wizard channeling mana) ---
+# --- THEME 7: Matrix Digital Rain ---
+MATRIX_WORK = [
+    [
+        r" 0 1 0 1 0 1 0 1 0 1 ",
+        r" 1 0 1 0 1 0 1 0 1 0 ",
+        r" 0 1 0 1 0 1 0 1 0 1 ",
+        r" 1 0 1 0 1 0 1 0 1 0 ",
+    ],
+    [
+        r" 1 0 0 1 1 0 1 0 0 1 ",
+        r" 0 1 1 0 0 1 0 1 1 0 ",
+        r" 1 0 0 1 1 0 1 0 0 1 ",
+        r" 0 1 1 0 0 1 0 1 1 0 ",
+    ],
+    [
+        r" 0 1 1 0 1 0 0 1 1 0 ",
+        r" 1 0 0 1 0 1 1 0 0 1 ",
+        r" 0 1 1 0 1 0 0 1 1 0 ",
+        r" 1 0 0 1 0 1 1 0 0 1 ",
+    ],
+]
+
+MATRIX_REST = [
+    [
+        r" . . · · . . · · . . ",
+        r" · · . . · · . . · · ",
+        r" . . · · . . · · . . ",
+        r" · · . . · · . . · · ",
+    ],
+    [
+        r" · · . . · · . . · · ",
+        r" . . · · . . · · . . ",
+        r" · · . . · · . . · · ",
+        r" . . · · . . · · . . ",
+    ],
+]
+
+
+# --- THEME 8: Cosmic Stars ---
+STARS_WORK = [
+    [
+        r" .  *     ·   .   *  ",
+        r"   ·   ✦    .   ·    ",
+        r" *   .    ·     *    ",
+        r"   ✦    *   .    ✦   ",
+    ],
+    [
+        r" *  ·     .   *   ·  ",
+        r"   .   *    ·   ✦    ",
+        r" ✦   *    .     ·    ",
+        r"   ·    ✦   *    .   ",
+    ],
+    [
+        r" ·  ✦     *   ·   .  ",
+        r"   *   ·    ✦   *    ",
+        r" .   ·    *     .    ",
+        r"   *    .   ·    *   ",
+    ],
+]
+
+STARS_REST = [
+    [
+        r" ·  ·     .   ·   ·  ",
+        r"   .   ·    ·   .    ",
+        r" ·   .    ·     ·    ",
+        r"   .    ·   .    .   ",
+    ],
+    [
+        r" .  ·     ·   .   ·  ",
+        r"   ·   .    .   ·    ",
+        r" .   ·    .     ·    ",
+        r"   ·    .   ·    .   ",
+    ],
+]
+
+
+# --- THEME 9: Lunar Phases (using rich.spinner moon) ---
+def _render_moon_frame(frame_idx: int, progress_pct: float, phase: str) -> list[str]:
+    frames = _RICH_SPINNERS.get("moon", {}).get("frames", ["🌑 ", "🌓 ", "🌕 ", "🌗 "])
+    if phase == "WORK":
+        # Progresses from New Moon (0%) to Full Moon (100%)
+        m_idx = min(len(frames) - 1, int(progress_pct * len(frames)))
+    elif phase == "OVERTIME":
+        m_idx = 4 % len(frames)  # Full moon glowing
+    else:
+        m_idx = frame_idx % len(frames)
+    m = frames[m_idx].strip()
+    return [
+        r"  .       ✦       ·  ",
+        f"     (   {m}   )   *   ",
+        r"  *       ·       .  ",
+    ]
+
+
+# --- THEME 10: Analog Clock (using rich.spinner clock) ---
+def _render_clock_frame(frame_idx: int, phase: str) -> list[str]:
+    frames = _RICH_SPINNERS.get("clock", {}).get("frames", ["🕛 ", "🕒 ", "🕕 ", "🕘 "])
+    c = frames[frame_idx % len(frames)].strip()
+    return [
+        r"     ┌─────────┐     ",
+        f"     │    {c}    │     ",
+        r"     └─────────┘     ",
+    ]
+
+
+# --- THEME 11: Arcane Mage (Wizard channeling mana) ---
 MAGE_WORK = [
     [
         r"     /\         ",
@@ -487,7 +606,7 @@ MAGE_REST = [
 ]
 
 
-# --- THEME 8: RPG Slime (from ascii-magic-art bouncing-slime) ---
+# --- THEME 12: RPG Slime (from ascii-magic-art bouncing-slime) ---
 SLIME_WORK = [
     [
         r"      . ✦ .    ",
@@ -497,19 +616,19 @@ SLIME_WORK = [
     ],
     [
         r"       ✦       ",
-        r"     / - \\    ",
+        r"     / - \     ",
         r"    ( -.- )    ",
-        r"  (_________)  ",
+        r"   (_________) ",
     ],
     [
         r"      . * .    ",
-        r"     / o \\    ",
+        r"     / o \     ",
         r"    ( •.• )    ",
         r"   (_______)   ",
     ],
     [
         r"      . ✦ .    ",
-        r"     / ^ \\    ",
+        r"     / ^ \     ",
         r"    ( ^.^ )    ",
         r"   (_______)   ",
     ],
@@ -531,7 +650,7 @@ SLIME_REST = [
 ]
 
 
-# --- THEME 9: Hourglass (from ascii-magic-art hourglass) ---
+# --- THEME 13: Hourglass (from ascii-magic-art hourglass) ---
 def _render_hourglass_chamber(progress_pct: float, frame_idx: int, phase: str) -> list[str]:
     """Generates an hourglass where sand trickles down based on elapsed progress."""
     if phase == "BREAK":
@@ -671,6 +790,50 @@ def get_animation_lines(
             frames = CANDLE_WORK
             caption = "~ Burning the midnight oil ~"
         return frames[frame_idx % len(frames)], caption
+
+    elif theme == "matrix":
+        if phase == "BREAK":
+            frames = MATRIX_REST
+            caption = "~ System in Standby ~"
+        elif phase == "OVERTIME":
+            frames = MATRIX_WORK
+            caption = "~ Mainframe Overclocked! ~"
+        else:
+            frames = MATRIX_WORK
+            caption = "~ Entering the Matrix ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "stars":
+        if phase == "BREAK":
+            frames = STARS_REST
+            caption = "~ Serene Cosmic Drift ~"
+        elif phase == "OVERTIME":
+            frames = STARS_WORK
+            caption = "~ Supernova Focus! ~"
+        else:
+            frames = STARS_WORK
+            caption = "~ Navigating the Cosmos ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "moon":
+        lines = _render_moon_frame(frame_idx, progress_pct, phase)
+        if phase == "BREAK":
+            caption = "~ Moonlit Rest ~"
+        elif phase == "OVERTIME":
+            caption = "~ Full Moon Brilliance ~"
+        else:
+            caption = "~ Waxing Focus ~"
+        return lines, caption
+
+    elif theme == "clock":
+        lines = _render_clock_frame(frame_idx, phase)
+        if phase == "BREAK":
+            caption = "~ Time to Rest ~"
+        elif phase == "OVERTIME":
+            caption = "~ Bonus Focus Minutes ~"
+        else:
+            caption = "~ Ticking Steady ~"
+        return lines, caption
 
     elif theme == "mage":
         if phase == "BREAK":
