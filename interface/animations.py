@@ -1,159 +1,539 @@
-"""Fantasy-themed pixel / ASCII animations for Pomodoro timer."""
+"""ASCII and pixel animations for Pomodoro timer.
+Includes adaptations and inspirations from the ascii-magic-art library.
+"""
 
-THEMES = ["bonfire", "mage", "slime", "hourglass", "none"]
+THEMES = [
+    "bonfire",
+    "coffee",
+    "cat",
+    "duck",
+    "knight",
+    "candle",
+    "mage",
+    "slime",
+    "hourglass",
+    "none",
+]
 
 THEME_NAMES = {
     "bonfire": "Bonfire",
+    "coffee": "Coffee Mug",
+    "cat": "Coding Cat",
+    "duck": "Debug Duck",
+    "knight": "Pixel Knight",
+    "candle": "Candle Flame",
     "mage": "Arcane Mage",
     "slime": "RPG Slime",
-    "hourglass": "Mana Hourglass",
+    "hourglass": "Hourglass",
     "none": "Off",
 }
 
-# --- THEME 1: Bonfire (Dark Souls styled coiled sword & flickering flames) ---
+# --- THEME 1: Bonfire (Dark Souls coiled sword & flame, inspired by campfire) ---
 BONFIRE_WORK = [
     [
-        "    (  . )    ",
-        "  (  ) )  )   ",
-        " (  ) ) (  )  ",
-        "   |====|     ",
-        " _/_||_\\_\\_   ",
+        r"    (  . )    ",
+        r"  (  ) )  )   ",
+        r" (  ) ) (  )  ",
+        r"   |====|     ",
+        r" _/_||_\_\_   ",
     ],
     [
-        "  ( *  )      ",
-        " ( ) (  )     ",
-        "( ) ( )  )    ",
-        "   |====|     ",
-        " _/_||_\\_\\_   ",
+        r"  ( *  )      ",
+        r" ( ) (  )     ",
+        r"( ) ( )  )    ",
+        r"   |====|     ",
+        r" _/_||_\_\_   ",
     ],
     [
-        "    (  . )    ",
-        "  (  ( ) )    ",
-        " ( ) (  ) )   ",
-        "   |====|     ",
-        " _/_||_\\_\\_   ",
+        r"    (  . )    ",
+        r"  (  ( ) )    ",
+        r" ( ) (  ) )   ",
+        r"   |====|     ",
+        r" _/_||_\_\_   ",
     ],
     [
-        "    (   * )   ",
-        "   ) ( (  )   ",
-        "  ( ) ) (  )  ",
-        "   |====|     ",
-        " _/_||_\\_\\_   ",
+        r"    (   * )   ",
+        r"   ) ( (  )   ",
+        r"  ( ) ) (  )  ",
+        r"   |====|     ",
+        r" _/_||_\_\_   ",
     ],
 ]
 
 BONFIRE_REST = [
     [
-        "     .   *    ",
-        "    ( · )     ",
-        "   (  .  )    ",
-        "   |====|     ",
-        " _/_||_\\_\\_   ",
+        r"     .   *    ",
+        r"    ( · )     ",
+        r"   (  .  )    ",
+        r"   |====|     ",
+        r" _/_||_\_\_   ",
     ],
     [
-        "    *   .     ",
-        "     ( · )    ",
-        "    (  .  )   ",
-        "   |====|     ",
-        " _/_||_\\_\\_   ",
+        r"    *   .     ",
+        r"     ( · )    ",
+        r"    (  .  )   ",
+        r"   |====|     ",
+        r" _/_||_\_\_   ",
     ],
 ]
 
-# --- THEME 2: Arcane Mage (Wizard channeling mana) ---
+
+# --- THEME 2: Coffee Mug (from ascii-magic-art coffee-steam & yawning-coffee-cup) ---
+COFFEE_WORK = [
+    [
+        r"      ( ~ )  .   ",
+        r"     .  ( * )    ",
+        r"   ┌───────────┐ ",
+        r"   │  ( •‿• )  │)",
+        r"   │  |     |  │/",
+        r"   └───\___/───┘ ",
+    ],
+    [
+        r"     ( * )  ~    ",
+        r"        ( . )    ",
+        r"   ┌───────────┐ ",
+        r"   │  ( •o• )  │)",
+        r"   │  |     |  │/",
+        r"   └───\___/───┘ ",
+    ],
+    [
+        r"        ~  ( * ) ",
+        r"     ( ~ )  .    ",
+        r"   ┌───────────┐ ",
+        r"   │  ( •‿• )  │)",
+        r"   │  |     |  │/",
+        r"   └───\___/───┘ ",
+    ],
+    [
+        r"     .  ( * )  ~ ",
+        r"       ( . )     ",
+        r"   ┌───────────┐ ",
+        r"   │  ( ^‿^ )  │)",
+        r"   │  |     |  │/",
+        r"   └───\___/───┘ ",
+    ],
+]
+
+COFFEE_REST = [
+    [
+        r"         z       ",
+        r"        Z   ( ~ )",
+        r"   ┌───────────┐ ",
+        r"   │  ( -.- )  │)",
+        r"   │  |  w  |  │/",
+        r"   └───\___/───┘ ",
+    ],
+    [
+        r"        z        ",
+        r"       Z    ( · )",
+        r"   ┌───────────┐ ",
+        r"   │  ( >o< )  │)",
+        r"   │  |  O  |  │/",
+        r"   └───\___/───┘ ",
+    ],
+]
+
+COFFEE_OVERTIME = [
+    [
+        r"    * ( ✦ ) ~  * ",
+        r"     ( ~ ) ( * ) ",
+        r"   ┌───────────┐ ",
+        r"   │  ( O.O )  │)",
+        r"   │  |  !  |  │/",
+        r"   └───\___/───┘ ",
+    ],
+    [
+        r"     ~ ( * ) ( ✦)",
+        r"    * ( ✦ ) ~    ",
+        r"   ┌───────────┐ ",
+        r"   │  ( O.O )  │)",
+        r"   │  |  !  |  │/",
+        r"   └───\___/───┘ ",
+    ],
+]
+
+
+# --- THEME 3: Coding Cat (from ascii-magic-art laptop-typing-cat & sleeping-cat) ---
+CAT_WORK = [
+    [
+        r"       /\_/\   ┌───────┐",
+        r"      ( •.• )  │>_ code│",
+        r"      / > .    └───────┘",
+        r"     (______)===|=====| ",
+        r"     ~~~~~~~~~~~~~~~~~~ ",
+    ],
+    [
+        r"       /\_/\   ┌───────┐",
+        r"      ( •_• )  │>_ nap()",
+        r"      / . <    └───────┘",
+        r"     (______)===|=====| ",
+        r"     ~~~~~~~~~~~~~~~~~~ ",
+    ],
+    [
+        r"       /\_/\   ┌───────┐",
+        r"      ( ^.^ )  │>_ run │",
+        r"      / > .    └───────┘",
+        r"     (______)===|=====| ",
+        r"     ~~~~~~~~~~~~~~~~~~ ",
+    ],
+    [
+        r"       /\_/\   ┌───────┐",
+        r"      ( •o• )  │>_ ok! │",
+        r"      / . <    └───────┘",
+        r"     (______)===|=====| ",
+        r"     ~~~~~~~~~~~~~~~~~~ ",
+    ],
+]
+
+CAT_REST = [
+    [
+        r"            z           ",
+        r"           Z            ",
+        r"       /\_/\            ",
+        r"      ( -.- )  ~*       ",
+        r"    (__________)        ",
+    ],
+    [
+        r"          z             ",
+        r"         Z              ",
+        r"       /\_/\            ",
+        r"      ( -.- )           ",
+        r"    (__________)        ",
+    ],
+]
+
+CAT_OVERTIME = [
+    [
+        r"     ✦ /\_/\ ✦ ┌───────┐",
+        r"      ( >.< )  │>_ TURBO",
+        r"      / > >    └───────┘",
+        r"     (______)===|=====| ",
+        r"     ~~~~~~~~~~~~~~~~~~ ",
+    ],
+    [
+        r"     * /\_/\ * ┌───────┐",
+        r"      ( >o< )  │>_ FAST!",
+        r"      / < <    └───────┘",
+        r"     (______)===|=====| ",
+        r"     ~~~~~~~~~~~~~~~~~~ ",
+    ],
+]
+
+
+# --- THEME 4: Debug Duck (from ascii-magic-art debug-duck-bob) ---
+DUCK_WORK = [
+    [
+        r"       __     [ hmm.. ] ",
+        r"     <(o )___   /       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+    [
+        r"       __     [ line 42]",
+        r"     <(• )___   /       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+    [
+        r"       __     [ logic? ]",
+        r"     <(o )___   /       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+    [
+        r"       __     [ quack! ]",
+        r"     <(^ )___   /       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+]
+
+DUCK_REST = [
+    [
+        r"       __        z      ",
+        r"     <(- )___   Z       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+    [
+        r"       __       z       ",
+        r"     <(- )___  Z        ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+]
+
+DUCK_OVERTIME = [
+    [
+        r"       __  ✦  [fixed! ✓]",
+        r"     <(^ )___   /       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+    [
+        r"       __  *  [DONE!  ✓]",
+        r"     <(^ )___   /       ",
+        r"      ( ._> /           ",
+        r"     ~ ~ ~ ~ ~ ~ ~ ~ ~  ",
+        r"     ~~~~~~~~~~~~~~~~~  ",
+    ],
+]
+
+
+# --- THEME 5: Pixel Knight (from ascii-magic-art pixel-knight-salute) ---
+KNIGHT_WORK = [
+    [
+        r"      ( )       ",
+        r"     /▓▓\   |   ",
+        r"    [ •_•] -|==>",
+        r"    /|▓▓|\  |   ",
+        r"   [▓|▓▓|▓]     ",
+        r"     ||||       ",
+    ],
+    [
+        r"      ( )   ^   ",
+        r"     /▓▓\   |   ",
+        r"    [ •_•] /|   ",
+        r"    /|▓▓|\/     ",
+        r"   [▓|▓▓|▓]     ",
+        r"     ||||       ",
+    ],
+    [
+        r"     *( )*  ✦   ",
+        r"     /▓▓\   |   ",
+        r"    [ ^_^] /|   ",
+        r"    /|▓▓|\/     ",
+        r"   [▓|▓▓|▓]     ",
+        r"     ||||       ",
+    ],
+    [
+        r"      ( )   ^   ",
+        r"     /▓▓\   |   ",
+        r"    [ •_•] /|   ",
+        r"    /|▓▓|\/     ",
+        r"   [▓|▓▓|▓]     ",
+        r"     ||||       ",
+    ],
+]
+
+KNIGHT_REST = [
+    [
+        r"      ( )       ",
+        r"     /▓▓\       ",
+        r"    [ -.-]      ",
+        r"    /|▓▓|\  |   ",
+        r"   [▓|▓▓|▓] |===",
+        r"     ||||       ",
+    ],
+    [
+        r"      ( )   z   ",
+        r"     /▓▓\  Z    ",
+        r"    [ -.-]      ",
+        r"    /|▓▓|\  |   ",
+        r"   [▓|▓▓|▓] |===",
+        r"     ||||       ",
+    ],
+]
+
+KNIGHT_OVERTIME = [
+    [
+        r"    ✦ ( ) ✦ ⚔   ",
+        r"     /▓▓\   |   ",
+        r"    [ ^o^] /|==>",
+        r"    /|▓▓|\/     ",
+        r"   [▓|▓▓|▓]     ",
+        r"     ||||       ",
+    ],
+    [
+        r"    * ( ) * ★   ",
+        r"     /▓▓\   |   ",
+        r"    [ ^o^] /|==>",
+        r"    /|▓▓|\/     ",
+        r"   [▓|▓▓|▓]     ",
+        r"     ||||       ",
+    ],
+]
+
+
+# --- THEME 6: Candle Flame (from ascii-magic-art candle-flame) ---
+CANDLE_WORK = [
+    [
+        r"     ( * )     ",
+        r"     ) ( )     ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │ █ │     ",
+        r"    ┌┴───┴┐    ",
+    ],
+    [
+        r"    (  . )     ",
+        r"    ( ) )      ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │.█ │     ",
+        r"    ┌┴───┴┐    ",
+    ],
+    [
+        r"     ( * )     ",
+        r"     (  ( )    ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │:█ │     ",
+        r"    ┌┴───┴┐    ",
+    ],
+    [
+        r"     ( .  )    ",
+        r"      ) (      ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │:█:│     ",
+        r"    ┌┴───┴┐    ",
+    ],
+]
+
+CANDLE_REST = [
+    [
+        r"       .       ",
+        r"       ·       ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │ █ │     ",
+        r"    ┌┴───┴┐    ",
+    ],
+    [
+        r"       *       ",
+        r"       ·       ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │ █ │     ",
+        r"    ┌┴───┴┐    ",
+    ],
+]
+
+CANDLE_OVERTIME = [
+    [
+        r"    * ( ✦ ) *  ",
+        r"    ( ) ( ) )  ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │:█:│     ",
+        r"    ┌┴───┴┐    ",
+    ],
+    [
+        r"    ✦ ( * ) ✦  ",
+        r"    ) ( ) ( )  ",
+        r"       |       ",
+        r"     ┌───┐     ",
+        r"     │:█:│     ",
+        r"    ┌┴───┴┐    ",
+    ],
+]
+
+
+# --- THEME 7: Arcane Mage (Wizard channeling mana) ---
 MAGE_WORK = [
     [
-        "     /\\         ",
-        "    /  \\    ✦   ",
-        "   /____\\  (o)  ",
-        "   ( •_•) -/ |  ",
-        "  _/(   )\\___|  ",
+        r"     /\         ",
+        r"    /  \    ✦   ",
+        r"   /____\  (o)  ",
+        r"   ( •_•) -/ |  ",
+        r"  _/(   )\___|  ",
     ],
     [
-        "     /\\     .   ",
-        "    /  \\    *   ",
-        "   /____\\  (O)  ",
-        "   ( •_•) -/ |  ",
-        "  _/(   )\\___|  ",
+        r"     /\     .   ",
+        r"    /  \    *   ",
+        r"   /____\  (O)  ",
+        r"   ( •_•) -/ |  ",
+        r"  _/(   )\___|  ",
     ],
     [
-        "     /\\    * ✦  ",
-        "    /  \\   (◎)  ",
-        "   /____\\  / |  ",
-        "   ( ^_^) -  |  ",
-        "  _/(   )\\___|  ",
+        r"     /\    * ✦  ",
+        r"    /  \   (◎)  ",
+        r"   /____\  / |  ",
+        r"   ( ^_^) -  |  ",
+        r"  _/(   )\___|  ",
     ],
     [
-        "     /\\     ✦   ",
-        "    /  \\   (o) *",
-        "   /____\\  / |  ",
-        "   ( •_•) -  |  ",
-        "  _/(   )\\___|  ",
+        r"     /\     ✦   ",
+        r"    /  \   (o) *",
+        r"   /____\  / |  ",
+        r"   ( •_•) -  |  ",
+        r"  _/(   )\___|  ",
     ],
 ]
 
 MAGE_REST = [
     [
-        "     /\\         ",
-        "    /  \\   z    ",
-        "   /____\\  Z    ",
-        "   ( -.-)  |    ",
-        "  _/(   )\\___|  ",
+        r"     /\         ",
+        r"    /  \   z    ",
+        r"   /____\  Z    ",
+        r"   ( -.-)  |    ",
+        r"  _/(   )\___|  ",
     ],
     [
-        "     /\\    z    ",
-        "    /  \\  Z     ",
-        "   /____\\       ",
-        "   ( -.-)  |    ",
-        "  _/(   )\\___|  ",
+        r"     /\    z    ",
+        r"    /  \  Z     ",
+        r"   /____\       ",
+        r"   ( -.-)  |    ",
+        r"  _/(   )\___|  ",
     ],
 ]
 
-# --- THEME 3: RPG Slime (Bouncing / breathing companion) ---
+
+# --- THEME 8: RPG Slime (from ascii-magic-art bouncing-slime) ---
 SLIME_WORK = [
     [
-        "      . ✦ .    ",
-        "     / o \\     ",
-        "    ( o.o )    ",
-        "   (_______)   ",
+        r"      . ✦ .    ",
+        r"     / o \     ",
+        r"    ( o.o )    ",
+        r"   (_______)   ",
     ],
     [
-        "       ✦       ",
-        "     / - \\     ",
-        "    ( -.- )    ",
-        "  (_________)  ",
+        r"       ✦       ",
+        r"     / - \\    ",
+        r"    ( -.- )    ",
+        r"  (_________)  ",
     ],
     [
-        "      . * .    ",
-        "     / o \\     ",
-        "    ( •.• )    ",
-        "   (_______)   ",
+        r"      . * .    ",
+        r"     / o \\    ",
+        r"    ( •.• )    ",
+        r"   (_______)   ",
     ],
     [
-        "      . ✦ .    ",
-        "     / ^ \\     ",
-        "    ( ^.^ )    ",
-        "   (_______)   ",
+        r"      . ✦ .    ",
+        r"     / ^ \\    ",
+        r"    ( ^.^ )    ",
+        r"   (_______)   ",
     ],
 ]
 
 SLIME_REST = [
     [
-        "          z    ",
-        "     / - \\  Z  ",
-        "    ( -.- )    ",
-        "  (_________)  ",
+        r"          z    ",
+        r"     / - \  Z  ",
+        r"    ( -.- )    ",
+        r"   (_________) ",
     ],
     [
-        "        z      ",
-        "     / - \\ Z   ",
-        "    ( -.- )    ",
-        "  (_________)  ",
+        r"        z      ",
+        r"     / - \ Z   ",
+        r"    ( -.- )    ",
+        r"   (_________) ",
     ],
 ]
 
 
+# --- THEME 9: Hourglass (from ascii-magic-art hourglass) ---
 def _render_hourglass_chamber(progress_pct: float, frame_idx: int, phase: str) -> list[str]:
-    """Generates an hourglass where mana sands trickle down based on elapsed progress."""
+    """Generates an hourglass where sand trickles down based on elapsed progress."""
     if phase == "BREAK":
         pct = max(0.0, min(1.0, 1.0 - progress_pct))
     elif phase == "OVERTIME":
@@ -189,9 +569,9 @@ def _render_hourglass_chamber(progress_pct: float, frame_idx: int, phase: str) -
     return [
         " ╔═══════╗ ",
         f" ║ {t1} ║ ",
-        f" ║  \\{t2}/  ║ ",
+        f" ║ \\{t2}/ ║ ",
         f" ║   {particle}   ║ ",
-        f" ║  /{b1}\\  ║ ",
+        f" ║ /{b1}\\ ║ ",
         f" ║ {b2} ║ ",
         " ╚═══════╝ ",
     ]
@@ -214,7 +594,7 @@ def get_animation_lines(
     theme: str,
     phase: str,
     frame_idx: int,
-    progress_pct: float = 0.0
+    progress_pct: float = 0.0,
 ) -> tuple[list[str], str]:
     """
     Returns (lines, caption) for the active theme, phase, and frame.
@@ -230,6 +610,66 @@ def get_animation_lines(
         else:
             frames = BONFIRE_WORK
             caption = "~ The Fire Burns ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "coffee":
+        if phase == "BREAK":
+            frames = COFFEE_REST
+            caption = "~ Savoring the Break ~"
+        elif phase == "OVERTIME":
+            frames = COFFEE_OVERTIME
+            caption = "~ Extra Caffeine Fuel! ~"
+        else:
+            frames = COFFEE_WORK
+            caption = "~ Fresh Coffee Steaming ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "cat":
+        if phase == "BREAK":
+            frames = CAT_REST
+            caption = "~ Cat is sleeping on cushion ~"
+        elif phase == "OVERTIME":
+            frames = CAT_OVERTIME
+            caption = "~ Cat typing at hyper-speed! ~"
+        else:
+            frames = CAT_WORK
+            caption = "~ Cat is writing code ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "duck":
+        if phase == "BREAK":
+            frames = DUCK_REST
+            caption = "~ Duck floating peacefully ~"
+        elif phase == "OVERTIME":
+            frames = DUCK_OVERTIME
+            caption = "~ Bug Squashed! Quack! ~"
+        else:
+            frames = DUCK_WORK
+            caption = "~ Explaining bug to duck ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "knight":
+        if phase == "BREAK":
+            frames = KNIGHT_REST
+            caption = "~ Knight resting at camp ~"
+        elif phase == "OVERTIME":
+            frames = KNIGHT_OVERTIME
+            caption = "~ Knight triumphant! ~"
+        else:
+            frames = KNIGHT_WORK
+            caption = "~ Knight standing guard ~"
+        return frames[frame_idx % len(frames)], caption
+
+    elif theme == "candle":
+        if phase == "BREAK":
+            frames = CANDLE_REST
+            caption = "~ Soft candle glow ~"
+        elif phase == "OVERTIME":
+            frames = CANDLE_OVERTIME
+            caption = "~ Flame burning bright! ~"
+        else:
+            frames = CANDLE_WORK
+            caption = "~ Burning the midnight oil ~"
         return frames[frame_idx % len(frames)], caption
 
     elif theme == "mage":
@@ -263,7 +703,7 @@ def get_animation_lines(
         elif phase == "OVERTIME":
             caption = "~ Hourglass Overflowing! ~"
         else:
-            caption = "~ Sands of Mana trickling ~"
+            caption = "~ Sands of Time trickling ~"
         return lines, caption
 
     return [], ""
