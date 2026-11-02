@@ -138,23 +138,6 @@ export function getThemeDisplayName(theme) {
 }
 
 /**
- * Trims leading and trailing rows that are completely empty / whitespace.
- * Preserves the uniform width of internal lines.
- */
-function trimBlankRows(lines) {
-  let start = 0;
-  while (start < lines.length && lines[start].trim() === '') {
-    start++;
-  }
-  let end = lines.length - 1;
-  while (end >= start && lines[end].trim() === '') {
-    end--;
-  }
-  if (start > end) return [];
-  return lines.slice(start, end + 1);
-}
-
-/**
  * Generates the ASCII animation lines and caption for a given theme, phase, and time.
  * Returns [lines: string[], caption: string]
  */
@@ -183,8 +166,7 @@ export function getAnimationLines(theme, phase, tOrFrameIdx = 0.0, progressPct =
     return [[], ''];
   }
 
-  const rawLines = typeof rawFrame === 'string' ? rawFrame.split('\n') : [];
-  const lines = trimBlankRows(rawLines);
+  const lines = typeof rawFrame === 'string' ? rawFrame.split('\n') : [];
 
   // Caption based on phase
   let caption = `~ ${piece.caption} ~`;

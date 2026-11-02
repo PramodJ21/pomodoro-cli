@@ -324,60 +324,69 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
         phaseTitle = '── BREAK ──';
       }
 
-      // --- Animation Frame ---
-      const [animLines, animCaption] = getAnimationLines(currentTheme, phase, animSeconds, progressPct);
-      const timerRequiredRows = 14;
-      const availableAnimRows = Math.max(0, canvas.rows - timerRequiredRows);
-      const canShowAnim = animLines.length > 0 && availableAnimRows >= 8;
+      // --- Static Layout Architecture ---
+      // Fix all component rows so the animation never causes jitter or shifts other elements.
+      const timerRequiredRows = 13; // phase(1) + sep(1) + clock(5) + sep(1) + bar(1) + status(1) + sep(1) + hints(2)
+      const canShowAnim = canvas.rows >= 22;
+      const animBoxHeight = canShowAnim ? Math.min(18, Math.max(6, canvas.rows - timerRequiredRows - 4)) : 0;
+      const hasCaption = canShowAnim || canvas.rows >= 18;
 
-      let displayLines = [];
-      if (canShowAnim) {
-        const maxAnimLines = availableAnimRows - (animCaption ? 1 : 0);
-        if (animLines.length <= maxAnimLines) {
+      const totalStaticHeight = (canShowAnim ? animBoxHeight : 0) + (hasCaption ? 1 : 0) + timerRequiredRows + 1;
+      const startRow = Math.max(1, Math.floor((canvas.rows - totalStaticHeight) / 2));
+
+      // Fixed static row positions — NEVER fluctuate during animation
+      const phaseRow = startRow;
+      const animStartRow = phaseRow + 1;
+      const captionRow = animStartRow + (canShowAnim ? animBoxHeight : 0);
+      const sep1Row = captionRow + (hasCaption ? 1 : 0);
+      const clockRow = sep1Row + 1;
+      const sep2Row = clockRow + 5;
+      const barRow = sep2Row + 1;
+      const statusRow = barRow + 1;
+      const sep3Row = statusRow + 1;
+      const hintsRow = sep3Row + 1;
+
+      // 1. Phase Header (fixed at phaseRow)
+      canvas.addstr(phaseRow, widthCenter - Math.floor(visibleLength(phaseTitle) / 2), phaseTitle, style.bold);
+
+      // 2. Animation Window (fixed viewport: rows animStartRow .. animStartRow + animBoxHeight - 1)
+      const [animLines, animCaption] = getAnimationLines(currentTheme, phase, animSeconds, progressPct);
+      if (canShowAnim && animBoxHeight > 0 && animLines.length > 0) {
+        let displayLines;
+        if (animLines.length <= animBoxHeight) {
           displayLines = animLines;
         } else {
-          const excess = animLines.length - maxAnimLines;
-          const startCrop = Math.floor(excess / 2);
-          displayLines = animLines.slice(startCrop, startCrop + maxAnimLines);
+          const excess = animLines.length - animBoxHeight;
+          const cropTop = Math.floor(excess / 2);
+          displayLines = animLines.slice(cropTop, cropTop + animBoxHeight);
+        }
+
+        const padTop = Math.max(0, Math.floor((animBoxHeight - displayLines.length) / 2));
+        for (let i = 0; i < displayLines.length; i++) {
+          const line = displayLines[i];
+          const col = widthCenter - Math.floor(visibleLength(line) / 2);
+          canvas.addstr(animStartRow + padTop + i, col, line);
         }
       }
 
-      const totalHeight = displayLines.length + (animCaption && (canShowAnim || canvas.rows >= 18) ? 1 : 0) + timerRequiredRows;
-      let row = Math.max(1, Math.floor((canvas.rows - totalHeight) / 2));
-
-      // Phase header
-      canvas.addstr(row, widthCenter - Math.floor(visibleLength(phaseTitle) / 2), phaseTitle, style.bold);
-      row++;
-
-      // Animation & Caption
-      if (displayLines.length > 0) {
-        for (const line of displayLines) {
-          canvas.addstr(row, widthCenter - Math.floor(visibleLength(line) / 2), line);
-          row++;
-        }
-        if (animCaption) {
-          canvas.addstr(row, widthCenter - Math.floor(visibleLength(animCaption) / 2), animCaption, style.dim);
-          row++;
-        }
-      } else if (animCaption && canvas.rows >= 18) {
-        canvas.addstr(row, widthCenter - Math.floor(visibleLength(animCaption) / 2), animCaption, style.dim);
-        row++;
+      // 3. Caption (fixed at captionRow)
+      if (hasCaption && animCaption) {
+        canvas.addstr(captionRow, widthCenter - Math.floor(visibleLength(animCaption) / 2), animCaption, style.dim);
       }
 
-      canvas.addstr(row, widthCenter - 15, '─'.repeat(30));
-      row++;
+      // 4. Separator 1 (fixed at sep1Row)
+      canvas.addstr(sep1Row, widthCenter - 15, '─'.repeat(30));
 
-      // Big Digital Clock
-      renderBigTime(canvas, row, widthCenter, timeStr);
-      row += 5;
+      // 5. Big Digital Clock (fixed at clockRow, 5 rows tall)
+      renderBigTime(canvas, clockRow, widthCenter, timeStr);
 
-      canvas.addstr(row, widthCenter - 15, '─'.repeat(30));
-      row++;
+      // 6. Separator 2 (fixed at sep2Row)
+      canvas.addstr(sep2Row, widthCenter - 15, '─'.repeat(30));
 
-      // Progress Bar & Info
-      drawProgressBar(canvas, row, widthCenter, barElapsed, barTotal);
-      row++;
+      // 7. Progress Bar (fixed at barRow)
+      drawProgressBar(canvas, barRow, widthCenter, barElapsed, barTotal);
 
+      // 8. Status Text (fixed at statusRow)
       let statusText;
       if (phase === 'OVERTIME') {
         const extraMins = Math.floor(overtimeSeconds / 60);
@@ -386,26 +395,24 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
       } else {
         statusText = `${pct}%`;
       }
-      canvas.addstr(row, widthCenter - Math.floor(visibleLength(statusText) / 2), statusText);
-      row++;
+      canvas.addstr(statusRow, widthCenter - Math.floor(visibleLength(statusText) / 2), statusText);
 
-      canvas.addstr(row, widthCenter - 15, '─'.repeat(30));
-      row++;
+      // 9. Separator 3 (fixed at sep3Row)
+      canvas.addstr(sep3Row, widthCenter - 15, '─'.repeat(30));
 
-      // Hints & Controls
+      // 10. Hints & Controls (fixed at hintsRow)
       const themeName = getThemeDisplayName(currentTheme);
       if (phase === 'WORK') {
         const hints = `q stop   b take break   t theme (${themeName})`;
-        canvas.addstr(row, widthCenter - Math.floor(visibleLength(hints) / 2), hints);
+        canvas.addstr(hintsRow, widthCenter - Math.floor(visibleLength(hints) / 2), hints);
       } else if (phase === 'OVERTIME') {
         const prompt = 'enter / b Start Break   |   q Save & Exit';
-        canvas.addstr(row, widthCenter - Math.floor(visibleLength(prompt) / 2), prompt, style.bold);
-        row++;
+        canvas.addstr(hintsRow, widthCenter - Math.floor(visibleLength(prompt) / 2), prompt, style.bold);
         const themeHint = `t theme (${themeName})`;
-        canvas.addstr(row, widthCenter - Math.floor(visibleLength(themeHint) / 2), themeHint);
+        canvas.addstr(hintsRow + 1, widthCenter - Math.floor(visibleLength(themeHint) / 2), themeHint);
       } else {
         const hints = `q finish break   t theme (${themeName})`;
-        canvas.addstr(row, widthCenter - Math.floor(visibleLength(hints) / 2), hints);
+        canvas.addstr(hintsRow, widthCenter - Math.floor(visibleLength(hints) / 2), hints);
       }
 
       canvas.flush();
