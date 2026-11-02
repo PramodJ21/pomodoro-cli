@@ -57,16 +57,23 @@ export class TerminalCanvas {
   constructor() {
     this.rows = process.stdout.rows || 24;
     this.cols = process.stdout.columns || 80;
-    this.commands = [];
+    this.rowEntries = Array.from({ length: this.rows }, () => []);
   }
 
   resize() {
     this.rows = process.stdout.rows || 24;
     this.cols = process.stdout.columns || 80;
+    this.rowEntries = Array.from({ length: this.rows }, () => []);
   }
 
   clear() {
-    this.commands = [];
+    for (let r = 0; r < this.rows; r++) {
+      if (this.rowEntries[r]) {
+        this.rowEntries[r].length = 0;
+      } else {
+        this.rowEntries[r] = [];
+      }
+    }
   }
 
   addstr(row, col, text, styling = null) {
@@ -92,17 +99,41 @@ export class TerminalCanvas {
 
     if (!output) return;
 
-    if (styling) {
-      output = styling(output);
+    if (!this.rowEntries[r]) {
+      this.rowEntries[r] = [];
     }
 
-    // Cursor position is 1-indexed in ANSI escape sequences
-    this.commands.push(`\x1b[${r + 1};${startCol + 1}H${output}`);
+    this.rowEntries[r].push({ col: startCol, text: output, styling });
   }
 
   flush() {
-    // Clear screen and draw all positioned strings
-    const buffer = '\x1b[2J\x1b[H' + this.commands.join('') + style.reset;
+    const outLines = [];
+    for (let r = 0; r < this.rows; r++) {
+      const entries = this.rowEntries[r];
+      if (!entries || entries.length === 0) {
+        outLines.push('\x1b[K');
+        continue;
+      }
+
+      entries.sort((a, b) => a.col - b.col);
+      let lineStr = '';
+      let curCol = 0;
+
+      for (const entry of entries) {
+        if (entry.col > curCol) {
+          lineStr += ' '.repeat(entry.col - curCol);
+          curCol = entry.col;
+        }
+        const str = entry.styling ? entry.styling(entry.text) : entry.text;
+        lineStr += str;
+        curCol += visibleLength(entry.text);
+      }
+
+      outLines.push(lineStr + style.reset + '\x1b[K');
+    }
+
+    // Atomic screen update: reposition to home, overwrite in place, clear remainder below
+    const buffer = '\x1b[H' + outLines.join('\r\n') + '\x1b[J';
     process.stdout.write(buffer);
   }
 }

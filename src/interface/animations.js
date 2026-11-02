@@ -158,7 +158,7 @@ function trimBlankRows(lines) {
  * Generates the ASCII animation lines and caption for a given theme, phase, and time.
  * Returns [lines: string[], caption: string]
  */
-export function getAnimationLines(theme, phase, frameIdx, progressPct = 0.0) {
+export function getAnimationLines(theme, phase, tOrFrameIdx = 0.0, progressPct = 0.0) {
   const resolved = resolveTheme(theme);
   if (resolved === 'none') {
     return [[], ''];
@@ -174,8 +174,8 @@ export function getAnimationLines(theme, phase, frameIdx, progressPct = 0.0) {
     return [[], ''];
   }
 
-  // Each frame in timer loop runs at 250ms interval -> t = frameIdx * 0.25
-  const t = Math.max(0, frameIdx * 0.25);
+  // Continuous seconds t: either direct seconds float, or frame index
+  const t = Math.max(0, typeof tOrFrameIdx === 'number' ? tOrFrameIdx : 0);
   let rawFrame = '';
   try {
     rawFrame = renderer(t);

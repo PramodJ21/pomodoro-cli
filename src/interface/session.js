@@ -157,10 +157,10 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
     let phase = 'WORK';
     let workEndedTime = null;
     let breakStartTime = null;
-    let tickCount = 0;
     let overtimeSeconds = 0;
     let savedSession = false;
     let timerId = null;
+    const animStartTime = Date.now();
 
     const cleanup = () => {
       if (timerId) clearInterval(timerId);
@@ -233,9 +233,8 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
       canvas.resize();
       canvas.clear();
 
-      tickCount++;
-      const frameIdx = Math.floor(tickCount / 2); // Frame advances every ~500ms
       const now = Date.now();
+      const animSeconds = (now - animStartTime) / 1000;
       const widthCenter = Math.floor(canvas.cols / 2);
 
       // --- State Transitions ---
@@ -326,7 +325,7 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
       }
 
       // --- Animation Frame ---
-      const [animLines, animCaption] = getAnimationLines(currentTheme, phase, frameIdx, progressPct);
+      const [animLines, animCaption] = getAnimationLines(currentTheme, phase, animSeconds, progressPct);
       const timerRequiredRows = 14;
       const availableAnimRows = Math.max(0, canvas.rows - timerRequiredRows);
       const canShowAnim = animLines.length > 0 && availableAnimRows >= 8;
@@ -412,7 +411,10 @@ export function runTimerScreen(canvas, keyManager, connection, workDuration, bre
       canvas.flush();
     };
 
+    // 30 FPS target for silky-smooth fluid animation
+    const FPS = 30;
+    const FRAME_MS = Math.floor(1000 / FPS); // ~33ms
     render();
-    timerId = setInterval(render, 250);
+    timerId = setInterval(render, FRAME_MS);
   });
 }

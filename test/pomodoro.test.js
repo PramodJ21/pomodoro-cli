@@ -92,3 +92,22 @@ test('Format duration utilities', () => {
   assert.equal(utils.visibleLength('\x1b[31mHello\x1b[0m'), 5);
   assert.equal(utils.visibleLength('\x1b[1m\x1b[32mTest 123\x1b[0m'), 8);
 });
+
+test('TerminalCanvas flicker-free line buffering', () => {
+  const canvas = new utils.TerminalCanvas();
+  canvas.rows = 10;
+  canvas.cols = 40;
+  canvas.resize();
+
+  canvas.clear();
+  canvas.addstr(2, 5, 'Hello', utils.style.bold);
+  canvas.addstr(2, 15, 'World');
+
+  // Verify entries exist for row 2
+  assert.equal(canvas.rowEntries[2].length, 2);
+  assert.equal(canvas.rowEntries[2][0].text, 'Hello');
+  assert.equal(canvas.rowEntries[2][1].text, 'World');
+
+  canvas.clear();
+  assert.equal(canvas.rowEntries[2].length, 0);
+});
