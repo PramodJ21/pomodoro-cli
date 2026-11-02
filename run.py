@@ -15,7 +15,11 @@ def main(stdscr: curses.window) -> None:
     db.initialize_db(connection)
 
     while True:
-        choice = HomeScreen(stdscr=stdscr, height_center=height_center, width_center=width_center)
+        height, width = stdscr.getmaxyx()
+        height_center = (height // 2)
+        width_center = (width // 2)
+
+        choice = HomeScreen(stdscr=stdscr, height_center=height_center, width_center=width_center, connection=connection)
 
         if choice == 0:
             SessionScreen(stdscr=stdscr, height_center=height_center, width_center=width_center, connection=connection)
