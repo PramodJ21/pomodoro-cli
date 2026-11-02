@@ -1,0 +1,28 @@
+{
+  "name": "pomodoro-cli",
+  "version": "0.2.0",
+  "description": "A beautiful terminal Pomodoro timer with animated ASCII companions and statistics",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "pomodoro-cli": "./bin/cli.js",
+    "pomodoro": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "pomodoro",
+    "cli",
+    "terminal",
+    "timer",
+    "ascii",
+    "focus"
+  ],
+  "author": "PRAMOD SANDEEP JOSHI <pramodjoshi090@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
